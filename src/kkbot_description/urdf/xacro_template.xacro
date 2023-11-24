@@ -1,0 +1,161 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+
+    <xacro:macro name="red">
+        <material name="red">
+            <color rgba="0.8 0.0 0.0 0.5"/>
+        </material>
+    </xacro:macro>
+
+    <xacro:macro name="green">
+        <material name="green">
+            <color rgba="0.0 0.8 0.0 0.5"/>
+        </material>
+    </xacro:macro>
+
+    <xacro:macro name="blue">
+        <material name="blue">
+            <color rgba="0.0 0.0 0.8 0.5"/>
+        </material>
+    </xacro:macro>
+
+    <xacro:macro name="black">
+        <material name="black">
+            <color rgba="0.0 0.0 0.0 0.5"/>
+        </material>
+    </xacro:macro>
+
+    <xacro:macro name="white">
+        <material name="white">
+            <color rgba="1 1 1 0.5"/>
+        </material>
+    </xacro:macro>
+
+    <xacro:macro name="material" params="color">
+        <xacro:if value="${color == 'red'}">
+            <xacro:red/>
+        </xacro:if>
+        <xacro:if value="${color == 'green'}">
+            <xacro:green/>
+        </xacro:if>
+        <xacro:if value="${color == 'blue'}">
+            <xacro:blue/>
+        </xacro:if>
+        <xacro:if value="${color == 'black'}">
+            <xacro:black/>
+        </xacro:if>
+        <xacro:if value="${color == 'white'}">
+            <xacro:white/>
+        </xacro:if>
+    </xacro:macro>
+
+    <xacro:macro name="sphere_visual" params="r origin_r origin_p origin_y color">
+        <visual>
+            <origin xyz="0 0 0" rpy="${origin_r} ${origin_p} ${origin_y}"/>
+            <geometry>
+                <sphere radius="${r}"/>
+            </geometry>
+            <xacro:material color="${color}"/>
+        </visual>
+    </xacro:macro>
+
+    <xacro:macro name="sphere_inertia" params="m r">
+        <inertial>
+            <mass value="${m}"/>
+            <inertia ixx="${(2/5) * m * (r*r)}" ixy="0.0" ixz="0.0" iyy="${(2/5) * m * (r*r)}" iyz="0.0" izz="${(2/5) * m * (r*r)}"/>
+        </inertial>
+    </xacro:macro>
+
+    <xacro:macro name="sphere_collision" params="r origin_r origin_p origin_y color">
+        <collision>
+            <origin xyz="0 0 0" rpy="${origin_r} ${origin_p} ${origin_y}"/>
+            <geometry>
+                <sphere radius="${r}"/>
+            </geometry>
+            <xacro:material color="${color}"/>
+        </collision>
+    </xacro:macro>
+
+    <xacro:macro name="box_visual" params="w d h origin_r origin_p origin_y color">
+        <visual>
+            <origin xyz="0 0 0" rpy="${origin_r} ${origin_p} ${origin_y}"/>
+            <geometry>
+                <box size="${w} ${d} ${h}"/>
+            </geometry>
+            <xacro:material color="${color}"/>
+        </visual>
+    </xacro:macro>
+
+    <xacro:macro name="box_inertia" params="m w d h">
+        <inertial>
+            <origin xyz="0 0 0" rpy="${pi/2} 0 ${pi/2}"/>
+            <mass value="${m}"/>
+            <inertia ixx="${(m/12) * (h*h + d*d)}" ixy="0.0" ixz="0.0" iyy="${(m/12) * (w*w + d*d)}" iyz="0.0" izz="${(m/12) * (w*w + h*h)}"/>
+        </inertial>
+    </xacro:macro>
+
+    <xacro:macro name="box_collision" params="w d h origin_r origin_p origin_y color">
+        <collision>
+            <origin xyz="0 0 0" rpy="${origin_r} ${origin_p} ${origin_y}"/>
+            <geometry>
+                <box size="${w} ${d} ${h}"/>
+            </geometry>
+            <xacro:material color="${color}"/>
+        </collision>
+    </xacro:macro>
+
+    <xacro:macro name="cylinder_visual" params="r h origin_r origin_p origin_y color">
+        <visual>
+            <origin xyz="0 0 0" rpy="${origin_r} ${origin_p} ${origin_y}"/>
+            <geometry>
+                <cylinder length="${h}" radius="${r}"/>
+            </geometry>
+            <xacro:material color="${color}"/>
+        </visual>
+    </xacro:macro>
+
+    <xacro:macro name="cylinder_inertia" params="m r h">
+        <inertial>
+            <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+            <mass value="${m}"/>
+            <inertia ixx="${(m/12) * (3*r*r + h*h)}" ixy="0" ixz="0" iyy="${(m/12) * (3*r*r + h*h)}" iyz="0" izz="${(m/2) * (r*r)}"/>
+        </inertial>
+    </xacro:macro>
+
+    <xacro:macro name="cylinder_collision" params="r h origin_r origin_p origin_y color">
+        <collision>
+            <origin xyz="0 0 0" rpy="${origin_r} ${origin_p} ${origin_y}"/>
+            <geometry>
+                <cylinder length="${h}" radius="${r}"/>
+            </geometry>
+            <xacro:material color="${color}"/>
+        </collision>
+    </xacro:macro>
+
+    <xacro:macro name="joint" params="name parent_name type origin_x origin_y origin_z axis_x axis_y axis_z">
+        <joint name="${name}_joint" type="${type}">
+            <parent link="${parent_name}"/>
+            <child link="${name}_link"/>
+            <origin xyz="${origin_x} ${origin_y} ${origin_z}"/>
+            <axis xyz="${axis_x} ${axis_y} ${axis_z}"/>
+        </joint>
+    </xacro:macro>
+
+    <xacro:property name="bot_length" value="0.12"/>
+    <xacro:property name="bot_radius" value="0.10"/>
+
+    <xacro:property name="laser_length" value="0.02"/>
+    <xacro:property name="laser_radius" value="0.02"/>
+
+    <xacro:property name="imu_width" value="0.02"/>
+    <xacro:property name="imu_depth" value="0.02"/>
+    <xacro:property name="imu_heigth" value="0.02"/>
+
+    <xacro:property name="wheel_length" value="0.04"/>
+    <xacro:property name="wheel_radius" value="0.032"/>
+
+    <xacro:property name="caster_radius" value="0.016"/>
+
+
+</robot>
