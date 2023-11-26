@@ -18,7 +18,7 @@ def generate_launch_description():
 
 
     start_gazebo_cmd = ExecuteProcess(
-        cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_init.so', '-s', 'libgazebo_ros_factory.so', ],
+        cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_init.so', '-s', 'libgazebo_ros_factory.so',  gazebo_world_path],
         output="screen"
     )
 
@@ -33,9 +33,16 @@ def generate_launch_description():
         executable="robot_state_publisher",
         arguments=[urdf_model_path]
     )
+    # rviz2_node = Node(
+    #     package="rviz2",
+    #     executable="rviz2",
+    #     name="rviz2",
+    #     output="screen"
+    # )
 
     ld.add_action(start_gazebo_cmd)
     ld.add_action(spawn_entity_cmd)
     ld.add_action(robot_state_publisher_node)
+    # ld.add_action(rviz2_node)
 
     return ld
