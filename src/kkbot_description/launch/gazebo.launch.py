@@ -15,7 +15,7 @@ def generate_launch_description():
     pkg_share = FindPackageShare(package=package_name).find(package_name)
     urdf_model_path = os.path.join(pkg_share, f"urdf/{urdf_name}")
     gazebo_world_path = os.path.join(pkg_share, "world/gazebo.world")
-
+    print(f"world path->{gazebo_world_path}")
 
     start_gazebo_cmd = ExecuteProcess(
         cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_init.so', '-s', 'libgazebo_ros_factory.so',  gazebo_world_path],

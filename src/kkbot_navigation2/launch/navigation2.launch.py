@@ -14,7 +14,7 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
     map_yaml_path = LaunchConfiguration('map', default=os.path.join(kkbot_navigation2_dir, 'map', 'kkbot_map.yaml'))
     nav2_param_path = LaunchConfiguration('params_file', default=os.path.join(kkbot_navigation2_dir, 'param', 'kkbot_nav2.yaml'))
-    rviz_config_dir = os.path.join(nav2_bringup_dir, 'rviz', 'nav2_default_view.rviz')
+    rviz_config_dir = os.path.join(kkbot_navigation2_dir, 'rviz', 'kkbot_rviz2.rviz')
 
     nav2_bringup_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([nav2_bringup_dir, '/launch', '/bringup_launch.py']),

@@ -10,7 +10,7 @@ find_package(ament_cmake REQUIRED)
 find_package(nav2_bringup REQUIRED)
 
 install(
-  DIRECTORY launch param map
+  DIRECTORY launch param map rviz
   DESTINATION share/${PROJECT_NAME}
 )
 
