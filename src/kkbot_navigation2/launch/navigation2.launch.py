@@ -12,7 +12,8 @@ def generate_launch_description():
     nav2_bringup_dir = get_package_share_directory('nav2_bringup')
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
-    map_yaml_path = LaunchConfiguration('map', default=os.path.join(kkbot_navigation2_dir, 'map', 'kkbot_map.yaml'))
+    # map_yaml_path = LaunchConfiguration('map', default=os.path.join(kkbot_navigation2_dir, 'map', 'kkbot_map.yaml'))
+    map_yaml_path = LaunchConfiguration('map', default=os.path.join(nav2_bringup_dir, 'maps', 'turtlebot3_world.yaml'))
     nav2_param_path = LaunchConfiguration('params_file', default=os.path.join(kkbot_navigation2_dir, 'param', 'kkbot_nav2.yaml'))
     rviz_config_dir = os.path.join(kkbot_navigation2_dir, 'rviz', 'kkbot_rviz2.rviz')
 
