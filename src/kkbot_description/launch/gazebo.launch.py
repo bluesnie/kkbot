@@ -6,6 +6,7 @@ from launch.conditions import IfCondition
 from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.substitutions import FindPackageShare
+from nav2_common.launch import RewrittenYaml
 
 from ament_index_python.packages import get_package_share_directory
 
@@ -41,10 +42,19 @@ def generate_launch_description():
         'Y': LaunchConfiguration('yaw', default='0.00')}
     robot_name = LaunchConfiguration('robot_name')
     robot_sdf = LaunchConfiguration('robot_sdf')
+    filter_mask = LaunchConfiguration('mask')
 
     remappings = [('/tf', 'tf'),
                   ('/tf_static', 'tf_static')]
-
+    # filter mask
+    param_substitutions = {
+        'use_sim_time': use_sim_time,
+        'yaml_filename': filter_mask}
+    configured_params = RewrittenYaml(
+        source_file=params_file,
+        root_key=namespace,
+        param_rewrites=param_substitutions,
+        convert_types=True)
 
     # Declare the launch arguments
     declare_namespace_cmd = DeclareLaunchArgument(
@@ -112,7 +122,7 @@ def generate_launch_description():
     
     declare_simulator_cmd = DeclareLaunchArgument(
         'headless',
-        default_value='False',
+        default_value='True',
         description='Whether to execute gzclient)')
 
     declare_world_cmd = DeclareLaunchArgument(
@@ -131,6 +141,11 @@ def generate_launch_description():
         default_value=os.path.join(bringup_dir, 'worlds', 'waffle.model'),
         # default_value=os.path.join(cur_pkg_dir, 'urdf', 'kkbot_base.urdf'),
         description='Full path to robot sdf file to spawn the robot in gazebo')
+    
+    declare_mask_yaml_file_cmd = DeclareLaunchArgument(
+        'mask',
+        default_value=os.path.join(kkbot_navigation2_dir, 'map', 'keepout_mask_turtlebot3_world.yaml')
+        )
 
 
     # Specify the actions
@@ -201,6 +216,31 @@ def generate_launch_description():
                           'use_composition': use_composition,
                           'use_respawn': use_respawn}.items())
 
+    filter_mask_server_cmd = Node(
+                package='nav2_map_server',
+                executable='map_server',
+                name='filter_mask_server',
+                output='screen',
+                emulate_tty=True,  # https://github.com/ros2/launch/issues/188
+                parameters=[configured_params])
+
+    costmap_filter_info_server_cmd = Node(
+                package='nav2_map_server',
+                executable='costmap_filter_info_server',
+                name='costmap_filter_info_server',
+                output='screen',
+                emulate_tty=True,  # https://github.com/ros2/launch/issues/188
+                parameters=[configured_params])
+    lifecycle_nodes = ['filter_mask_server', 'costmap_filter_info_server']
+    lifecycle_manager_cmd =  Node(
+                package='nav2_lifecycle_manager',
+                executable='lifecycle_manager',
+                name='lifecycle_manager_costmap_filters',
+                output='screen',
+                emulate_tty=True,  # https://github.com/ros2/launch/issues/188
+                parameters=[{'use_sim_time': use_sim_time},
+                            {'autostart': autostart},
+                            {'node_names': lifecycle_nodes}])
 
     # Create the launch description and populate
     ld = LaunchDescription()
@@ -224,6 +264,7 @@ def generate_launch_description():
     ld.add_action(declare_robot_name_cmd)
     ld.add_action(declare_robot_sdf_cmd)
     ld.add_action(declare_use_respawn_cmd)
+    ld.add_action(declare_mask_yaml_file_cmd)
 
     # Add any conditioned actions
     ld.add_action(start_gazebo_server_cmd)
@@ -235,6 +276,9 @@ def generate_launch_description():
     ld.add_action(start_robot_state_publisher_cmd)
     ld.add_action(rviz_cmd)
     ld.add_action(bringup_cmd)
+    ld.add_action(filter_mask_server_cmd)
+    ld.add_action(costmap_filter_info_server_cmd)
+    ld.add_action(lifecycle_manager_cmd)
 
     return ld
 
