@@ -1,0 +1,1 @@
+# 要想跑该demo记得把`aws-robomaker-small-warehouse-world`和其他相关的`models`拷贝到 `~/.gazebo/models/`下

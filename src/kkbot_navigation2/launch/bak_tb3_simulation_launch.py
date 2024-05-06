@@ -11,11 +11,14 @@ from nav2_common.launch import RewrittenYaml
 from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
-    kkbot_nav2_dir = get_package_share_directory("kkbot_navigation2")
-    launch_dir = os.path.join(kkbot_nav2_dir, 'launch')
+    package_name = "kkbot_navigation2"
+
+    kkbot_nav2_dir = FindPackageShare(package=package_name).find(package_name)
+    # kkbot_desc_dir = get_package_share_directory('kkbot_description')
+    bringup_dir = get_package_share_directory('nav2_bringup')
+    launch_dir = os.path.join(bringup_dir, 'launch')
     tb3_map_dir = os.path.join(kkbot_nav2_dir, "map", 'tb3')
-    kkbot_desc_dir = get_package_share_directory("kkbot_description")
-    
+
     slam = LaunchConfiguration('slam')
     namespace = LaunchConfiguration('namespace')
     use_namespace = LaunchConfiguration('use_namespace')
@@ -137,7 +140,7 @@ def generate_launch_description():
     declare_world_cmd = DeclareLaunchArgument(
         'world',
         # default_value=os.path.join(kkbot_desc_dir, 'world', 'kkbot.world'),
-        default_value=os.path.join(kkbot_desc_dir, 'world', 'world_only.model'),
+        default_value=os.path.join(bringup_dir, 'worlds', 'world_only.model'),
         description='Full path to world model file to load')
     
     declare_robot_name_cmd = DeclareLaunchArgument(
@@ -147,7 +150,7 @@ def generate_launch_description():
 
     declare_robot_sdf_cmd = DeclareLaunchArgument(
         'robot_sdf',
-        default_value=os.path.join(kkbot_desc_dir, 'world', 'waffle.model'),
+        default_value=os.path.join(bringup_dir, 'worlds', 'waffle.model'),
         # default_value=os.path.join(kkbot_desc_dir, 'urdf', 'kkbot_base.urdf'),
         description='Full path to robot sdf file to spawn the robot in gazebo')
     
@@ -165,15 +168,16 @@ def generate_launch_description():
         condition=IfCondition(use_simulator),
         cmd=['gzserver', '-s', 'libgazebo_ros_init.so',
              '-s', 'libgazebo_ros_factory.so', world],
-        cwd=[launch_dir],output='screen')
+        output='screen')
 
     start_gazebo_client_cmd = ExecuteProcess(
         condition=IfCondition(PythonExpression(
             [use_simulator, ' and not ', headless])),
-        cmd=['gzclient'],cwd=[launch_dir],
+        cmd=['gzclient'],
         output='screen')
     
-    urdf = os.path.join(kkbot_desc_dir, 'urdf', 'turtlebot3_waffle.urdf')
+    urdf = os.path.join(bringup_dir, 'urdf', 'turtlebot3_waffle.urdf')
+    # urdf = os.path.join(kkbot_desc_dir, 'urdf', 'kkbot_base.urdf')
     with open(urdf, 'r') as infp:
         robot_description = infp.read()    
 
@@ -198,7 +202,6 @@ def generate_launch_description():
             '-robot_namespace', namespace,
             '-x', pose['x'], '-y', pose['y'], '-z', pose['z'],
             '-R', pose['R'], '-P', pose['P'], '-Y', pose['Y']])
-
 
     rviz_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
