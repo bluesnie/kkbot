@@ -36,8 +36,7 @@ def main():
         i += 1
         feedback = navigator.getFeedback()
         if feedback and i% 5 == 0:
-            print(f"Est time of arrival: {Duration.from_msg(feedback.estimated_time_remaining).nanoseconds / 1e9} seconds")
-
+            navigator.get_logger().info(f"Est time of arrival: {Duration.from_msg(feedback.estimated_time_remaining).nanoseconds / 1e9} seconds")
             if Duration.from_msg(feedback.navigation_time) > Duration(seconds=600):
                 navigator.cancelTask()
             
@@ -47,13 +46,13 @@ def main():
 
     result = navigator.getResult()
     if result == TaskResult.SUCCEEDED:
-        print("Goal successed!")
+        navigator.get_logger().info("Goal successed!")
     elif result == TaskResult.CANCELED:
-        print("Goal was canceled!")
+        navigator.get_logger().info("Goal was canceled!")
     elif result == TaskResult.FAILED:
-        print("Goal failed")
+        navigator.get_logger().info("Goal failed")
     else:
-        print("Goal has an invalid return status!")
+        navigator.get_logger().info("Goal has an invalid return status!")
     navigator.lifecycleShutdown()
     exit(0)
 
