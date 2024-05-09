@@ -1,0 +1,52 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "ROS: Launch",
+      "request": "launch",
+      "target": "/home/quicktron/cplusproject/kkbot/src/kkbot_simple_demo/launch/nav_to_pose_example_launch.py",
+      // "target": "/home/quicktron/cplusproject/kkbot/src/kkbot_simple_demo/kkbot_simple_demo/example_nav_to_pose.py",
+      "type": "ros"
+    },
+    {
+      "name": "ROS: Attach",
+      "type": "ros",
+      "request": "attach",
+    },
+    {
+      "name": "Python: Current File",
+      "type": "python",
+      "request": "launch",
+      "program": "/home/quicktron/cplusproject/kkbot/src/kkbot_simple_demo/kkbot_simple_demo/example_nav_to_pose.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "GdbServer: debug",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "/home/quicktron/cplusproject/kkbot/src/kkbot_simple_demo/kkbot_simple_demo/example_nav_to_pose.py",
+      "miDebuggerServerAddress": "localhost:10086",
+      "cwd": "/"
+    },
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": false,
+      "externalConsole": false,
+      "cwd": "/home/quicktron/cplusproject/kkbot/.vscode",
+      "program": "/home/quicktron/cplusproject/kkbot/.vscode/build/Debug/outDebug",
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    }
+  ]
+}
