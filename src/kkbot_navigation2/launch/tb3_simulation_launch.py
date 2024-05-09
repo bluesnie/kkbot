@@ -71,6 +71,17 @@ def generate_launch_description():
         convert_types=True,
     )
 
+    # new_param_substitutions = {
+    #     "global_costmap.global_costmap.ros__parameters.keepout_filter.enbalbed": "False",
+    #     "local_costmap.local_costmap.ros__parameters.keepout_filter.enbalbed": "False",
+    # }
+    # new_params_file = RewrittenYaml(
+    #     source_file=params_file,
+    #     root_key=namespace,
+    #     param_rewrites=new_param_substitutions,
+    #     convert_types=True,
+    # )
+
     # Declare the launch arguments
     declare_namespace_cmd = DeclareLaunchArgument(
         "namespace", default_value="", description="Top-level namespace"
@@ -263,6 +274,7 @@ def generate_launch_description():
             "map": map_yaml_file,
             "use_sim_time": use_sim_time,
             "params_file": params_file,
+            # "params_file": new_params_file,
             "autostart": autostart,
             "use_composition": use_composition,
             "use_respawn": use_respawn,
